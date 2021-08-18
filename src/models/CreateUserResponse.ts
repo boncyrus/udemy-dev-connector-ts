@@ -3,4 +3,5 @@ export interface CreateUserResponse {
     name: string;
     avatar: string;
     email: string;
+    accessToken: string;
 }

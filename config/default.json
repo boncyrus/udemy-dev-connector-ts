@@ -1,0 +1,5 @@
+{
+    "connectionStrings": {
+        "mongoUri": "mongodb+srv://boncyrus:Hellowrold@devconnector.4pcwp.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
+    }
+}

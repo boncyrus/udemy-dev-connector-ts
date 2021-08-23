@@ -11,10 +11,6 @@ const port = process.env.API_PORT || 3001;
 connectMongoDb();
 
 app.use(express.json());
-app.get('', (req, res) => {
-    res.send('Hello world');
-});
-
 app.use('/api/users', UsersApi);
 app.use('/api/posts', PostsApi);
 app.use('/api/profile', PorfileApi);

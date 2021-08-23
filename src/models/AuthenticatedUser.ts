@@ -1,4 +1,4 @@
-export interface CreateTokenRequest {
+export interface AuthenticatedUser {
     userId: string;
     name: string;
     email: string;

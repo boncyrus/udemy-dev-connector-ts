@@ -34,6 +34,8 @@ export const registerUser = async (request: CreateUserRequest) => {
 
     const tokenResponse = await createToken({
         userId: response.id,
+        email: response.email,
+        name: response.name,
     });
 
     response.accessToken = tokenResponse.accessToken;

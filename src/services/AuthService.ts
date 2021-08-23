@@ -1,3 +1,4 @@
+import { AuthenticatedUser } from './../models/AuthenticatedUser';
 import { JwtConfig } from './../models/AppConfig';
 import { CreateTokenRequest } from '../models/CreateTokenRequest';
 import jwt, { SignOptions } from 'jsonwebtoken';
@@ -5,9 +6,11 @@ import config from 'config';
 import { CreateTokenResponse } from '../models/CreateTokenResponse';
 
 export const createToken = (request: CreateTokenRequest): Promise<CreateTokenResponse> => {
-    const payload = {
+    const payload: {
+        user: AuthenticatedUser;
+    } = {
         user: {
-            id: request.userId,
+            ...request,
         },
     };
 

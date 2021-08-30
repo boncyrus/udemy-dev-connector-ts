@@ -1,14 +1,19 @@
+import { UpsertProfileResponse } from './../models/UpsertProfileResponse';
 import express, { Request, Response } from 'express';
 import { check } from 'express-validator';
 import { ErrorCodes } from '../constants/ErrorCodes';
 import InputValidationMiddleware from '../middlewares/InputValidationMiddleware';
 import JwtMiddleware from '../middlewares/JwtMiddleware';
 import { createApiResponse } from './../models/ApiResponse';
-import { CreateProfileRequest } from './../models/CreateProfileRequest';
-import { createUserProfile, getUserProfile } from './../services/ProfileService';
+import { UpsertProfileRequest } from '../models/UpsertProfileRequest';
+import { upsertUserProfile, getUserProfile } from './../services/ProfileService';
 
 const router = express.Router();
 
+/**
+ * GET /api/me
+ * Gets the profile of the current user.
+ */
 router.get('/me', JwtMiddleware, async (req, res) => {
     try {
         const currentUser = req.user;
@@ -27,20 +32,30 @@ router.get('/me', JwtMiddleware, async (req, res) => {
     }
 });
 
+/**
+ * POST /api/profile
+ * Creates or updates the profile of the user.
+ * @returns {ApiResponse<UpsertProfileResponse>}
+ */
 router.post(
     '/',
-    [JwtMiddleware, check('skills', 'Skills is required').not().isEmpty(), InputValidationMiddleware],
+    [
+        JwtMiddleware,
+        check('skills', 'Skills is required').not().isEmpty(),
+        check('profession', 'Profession is required').not().isEmpty(),
+        InputValidationMiddleware,
+    ],
     async (req: Request, res: Response) => {
         const user = req.user;
-        const requestBody = req.body as CreateProfileRequest;
+        const requestBody = req.body as UpsertProfileRequest;
 
         try {
-            const response = await createUserProfile(user.email, requestBody);
-            if (response.code) {
+            const response = await upsertUserProfile(user.email, requestBody);
+            if (!response.data) {
                 return res.status(400).json(createApiResponse(null, [{ msg: response.msg as string }]));
             }
 
-            return res.send(createApiResponse(response.data));
+            return res.send(createApiResponse<UpsertProfileResponse>(response.data));
         } catch (error) {
             console.log('An error occured', error);
             return res.send(400);

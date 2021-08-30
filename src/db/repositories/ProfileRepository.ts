@@ -1,23 +1,21 @@
 import ProfileSchema from '../schemas/ProfileSchema';
 import UserSchema from '../schemas/UserSchema';
-import { CreateProfileRequest } from './../../models/CreateProfileRequest';
+import { UpsertProfileRequest } from '../../models/UpsertProfileRequest';
 import { getUser } from './UsersRepository';
 
 export const getProfile = async (email: string) => {
     const user = await UserSchema.findOne({ email });
 
     if (user) {
-        const profile = await ProfileSchema.findOne({
+        return ProfileSchema.findOne({
             user: user,
         }).populate('user', ['name', 'avatar']);
-
-        return profile;
     }
 
     return null;
 };
 
-export const createProfile = async (email: string, profile: CreateProfileRequest) => {
+export const createProfile = async (email: string, profile: UpsertProfileRequest) => {
     const user = await getUser(email);
     const entity = new ProfileSchema({
         ...profile,
@@ -27,4 +25,24 @@ export const createProfile = async (email: string, profile: CreateProfileRequest
     });
 
     return entity.save();
+};
+
+export const updateProfile = async (email: string, profile: UpsertProfileRequest) => {
+    const user = await getUser(email);
+
+    if (user) {
+        const entity = await ProfileSchema.findOneAndUpdate(
+            {
+                user: user,
+            },
+            {
+                $set: profile,
+            },
+            {
+                new: true,
+            }
+        );
+
+        return entity?.save();
+    }
 };

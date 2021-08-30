@@ -1,4 +1,4 @@
-export interface ApiResponse {
+export interface ApiResponse<T> {
     data: any;
     errors: ErrorItem[];
 }
@@ -9,7 +9,7 @@ interface ErrorItem {
     location?: string;
 }
 
-export const createApiResponse = (data: any, errors: ErrorItem[] = []): ApiResponse => {
+export const createApiResponse = <T = unknown>(data: any, errors: ErrorItem[] = []): ApiResponse<T> => {
     return {
         data,
         errors,

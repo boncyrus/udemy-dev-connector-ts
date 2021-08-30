@@ -1,10 +1,11 @@
 import { ErrorCodes } from '../constants/ErrorCodes';
-import { CreateProfileResponse } from '../models/CreateProfileResponse';
 import { createErrorResponse } from '../models/ServiceResponse';
-import { createProfile, getProfile } from './../db/repositories/ProfileRepository';
-import { CreateProfileRequest } from './../models/CreateProfileRequest';
+import { UpsertProfileRequest } from '../models/UpsertProfileRequest';
+import { UpsertProfileResponse } from '../models/UpsertProfileResponse';
+import { createProfile, getProfile, updateProfile } from './../db/repositories/ProfileRepository';
 import { GetProfileRequest } from './../models/GetProfileRequest';
 import { GetProfileResponse } from './../models/GetProfileResponse';
+import { Profile } from './../models/Profile';
 import { createSuccessResponse } from './../models/ServiceResponse';
 
 export const getUserProfile = async (request: GetProfileRequest) => {
@@ -13,31 +14,40 @@ export const getUserProfile = async (request: GetProfileRequest) => {
         return createErrorResponse(ErrorCodes.NoProfileAssociated, 'No profile associated.');
     }
 
+    const user = profile.user as any;
     const response: GetProfileResponse = {
-        ...profile,
+        skills: profile.skills,
+        bio: profile.bio,
+        company: profile.company,
+        githubUsername: profile.githubUsername,
+        website: profile.website,
+        profession: profile.profession,
+        userId: user.id,
     };
 
     return createSuccessResponse(response);
 };
 
-export const createUserProfile = async (email: string, request: CreateProfileRequest) => {
+export const upsertUserProfile = async (email: string, request: UpsertProfileRequest) => {
     const currentProfile = await getProfile(email);
-    if (currentProfile) {
-        return createErrorResponse(ErrorCodes.ProfileAlreadyAssociated, 'User already have an associated proifle.');
-    }
+    let result: Profile | undefined;
 
-    const result = await createProfile(email, request);
+    if (currentProfile) {
+        result = await updateProfile(email, request);
+    } else {
+        result = await createProfile(email, request);
+    }
 
     if (result) {
         const userId = result.user as any;
 
-        const response: CreateProfileResponse = {
+        const response: UpsertProfileResponse = {
             skills: result.skills,
             bio: result?.bio,
             company: result?.company,
             website: result?.website,
             githubUsername: result?.githubUsername,
-            occupation: result?.occupation,
+            profession: result.profession,
             userId: userId,
         };
 

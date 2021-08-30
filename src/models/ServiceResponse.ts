@@ -1,7 +1,7 @@
 import { ErrorCodes } from './../constants/ErrorCodes';
-export const createSuccessResponse = <TResponse>(data: TResponse): ServiceResponse<TResponse> => {
+export const createSuccessResponse = <TResponse = unknown>(data: TResponse): ServiceResponse<TResponse> => {
     return {
-        data: data || null,
+        data: data,
     };
 };
 
@@ -16,5 +16,5 @@ export const createErrorResponse = (code: ErrorCodes, msg: string): ServiceRespo
 export interface ServiceResponse<T> {
     code?: ErrorCodes;
     msg?: string;
-    data: T | null;
+    data: T;
 }

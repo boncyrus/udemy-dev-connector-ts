@@ -1,11 +1,11 @@
 import { User } from './User';
 
 export interface GetProfileResponse {
-    user: User;
+    userId: any;
     company?: string;
     website?: string;
     skills: Array<string>;
     bio?: string;
     githubUsername?: string;
-    occupation?: string;
+    profession: string;
 }

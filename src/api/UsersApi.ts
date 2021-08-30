@@ -1,7 +1,8 @@
 import express, { Request, Response } from 'express';
 import { check, validationResult } from 'express-validator';
 import InputValidationMiddleware from '../middlewares/InputValidationMiddleware';
-import { createApiResponse } from './../models/ApiResponse';
+import { CreateUserResponse } from '../models/CreateUserResponse';
+import { ApiResponse, createApiResponse } from './../models/ApiResponse';
 import { CreateUserRequest } from './../models/CreateUserRequest';
 import { registerUser } from './../services/UserService';
 
@@ -12,6 +13,11 @@ const modelValidation = {
     },
 };
 
+/**
+ * POST /api/users
+ * Creates a user.
+ * @returns {ApiResponse<CreateUserResponse>}
+ */
 router.post(
     '/',
     [
@@ -34,11 +40,11 @@ router.post(
         try {
             const result = await registerUser(body);
 
-            if (result.code) {
+            if (!result.data) {
                 return res.status(400).json(createApiResponse(null, [{ msg: result.msg as string }]));
             }
 
-            return res.send(createApiResponse(result.data));
+            return res.send(createApiResponse<CreateUserResponse>(result.data));
         } catch (error) {
             console.log('An error occured', error);
             return res.send(400);

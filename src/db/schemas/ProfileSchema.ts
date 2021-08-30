@@ -1,4 +1,4 @@
-import { Schema, model, Document } from 'mongoose';
+import { model, Schema } from 'mongoose';
 import { Profile } from '../../models/Profile';
 import UserSchema from './UserSchema';
 
@@ -15,12 +15,14 @@ const schema = new Schema<Profile>({
     },
     skills: {
         type: [String],
+        require: true,
     },
     githubUsername: {
         type: String,
     },
-    occupation: {
+    profession: {
         type: String,
+        require: true,
     },
 });
 

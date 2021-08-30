@@ -1,4 +1,4 @@
-import { createUser, getUser, getUserAvatarOrDefault } from '../db/repositories/UsersRepositories';
+import { createUser, getUser, getUserAvatarOrDefault } from '../db/repositories/UsersRepository';
 import { User } from '../models/User';
 import { ErrorCodes } from './../constants/ErrorCodes';
 import { CreateUserRequest } from './../models/CreateUserRequest';

@@ -3,7 +3,7 @@ import UserSchema from '../schemas/UserSchema';
 import bcrypt from 'bcrypt';
 import gravatar from 'gravatar';
 
-export const getUser = (email: string) => {
+export const getUser = async (email: string) => {
     return UserSchema.findOne({ email });
 };
 

@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express';
 import { check, validationResult } from 'express-validator';
-import { ErrorCodes } from '../constants/ErrorCodes';
+import InputValidationMiddleware from '../middlewares/InputValidationMiddleware';
 import { createApiResponse } from './../models/ApiResponse';
 import { CreateUserRequest } from './../models/CreateUserRequest';
 import { registerUser } from './../services/UserService';
@@ -21,6 +21,7 @@ router.post(
             'password',
             `Please enter a password with ${modelValidation.password.minLength} or more characters`
         ).isLength({ min: modelValidation.password.minLength }),
+        InputValidationMiddleware,
     ],
     async (req: Request, res: Response) => {
         const body = req.body as CreateUserRequest;
@@ -33,7 +34,7 @@ router.post(
         try {
             const result = await registerUser(body);
 
-            if (result.code && result.code === ErrorCodes.UserAlreadyExists) {
+            if (result.code) {
                 return res.status(400).json(createApiResponse(null, [{ msg: result.msg as string }]));
             }
 

@@ -1,31 +1,35 @@
-import { UpsertProfileResponse } from './../models/UpsertProfileResponse';
 import express, { Request, Response } from 'express';
 import { check } from 'express-validator';
-import { ErrorCodes } from '../constants/ErrorCodes';
 import InputValidationMiddleware from '../middlewares/InputValidationMiddleware';
 import JwtMiddleware from '../middlewares/JwtMiddleware';
-import { createApiResponse } from './../models/ApiResponse';
 import { UpsertProfileRequest } from '../models/UpsertProfileRequest';
-import { upsertUserProfile, getUserProfile } from './../services/ProfileService';
+import { createApiResponse } from './../models/ApiResponse';
+import { GetProfileRequest } from './../models/GetProfileRequest';
+import { GetProfileResponse } from './../models/GetProfileResponse';
+import { UpsertProfileResponse } from './../models/UpsertProfileResponse';
+import { getUserProfile, upsertUserProfile } from './../services/ProfileService';
 
 const router = express.Router();
 
 /**
  * GET /api/me
  * Gets the profile of the current user.
+ * @returns {ApiResponse<GetProfileResponse>}
  */
 router.get('/me', JwtMiddleware, async (req, res) => {
     try {
         const currentUser = req.user;
-        const result = await getUserProfile({
+        const request: GetProfileRequest = {
             email: currentUser.email,
-        });
+        };
 
-        if (result.code === ErrorCodes.NoProfileAssociated) {
+        const result = await getUserProfile(request);
+
+        if (!result.data) {
             return res.status(400).json(createApiResponse(null, [{ msg: result.msg as string }]));
         }
 
-        return res.send(createApiResponse(result.data));
+        return res.send(createApiResponse<GetProfileResponse>(result.data));
     } catch (error) {
         console.log('An error occured', error);
         return res.send(400);

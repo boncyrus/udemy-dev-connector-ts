@@ -4,4 +4,5 @@ export enum ErrorCodes {
     NoProfileAssociated = 'NoProfileAssociated',
     CreateProfileFailed = 'CreateProfileFailed',
     ProfileAlreadyAssociated = 'ProfileAlreadyAssociated',
+    UnableToGetProfiles = 'UnableToGetProfiles',
 }

@@ -9,6 +9,7 @@ export const connectMongoDb = async () => {
             useNewUrlParser: true,
             useUnifiedTopology: true,
             useCreateIndex: true,
+            useFindAndModify: false,
         });
         console.log('mongo db connected');
     } catch (error) {

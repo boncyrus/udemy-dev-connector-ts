@@ -1,3 +1,4 @@
+import { GetAllProfilesResponse } from './../models/GetAllProfilesResponse';
 import express, { Request, Response } from 'express';
 import { check } from 'express-validator';
 import InputValidationMiddleware from '../middlewares/InputValidationMiddleware';
@@ -7,7 +8,7 @@ import { createApiResponse } from './../models/ApiResponse';
 import { GetProfileRequest } from './../models/GetProfileRequest';
 import { GetProfileResponse } from './../models/GetProfileResponse';
 import { UpsertProfileResponse } from './../models/UpsertProfileResponse';
-import { getUserProfile, upsertUserProfile } from './../services/ProfileService';
+import { getUserProfile, getUserProfiles, upsertUserProfile } from './../services/ProfileService';
 
 const router = express.Router();
 
@@ -31,8 +32,7 @@ router.get('/me', JwtMiddleware, async (req, res) => {
 
         return res.send(createApiResponse<GetProfileResponse>(result.data));
     } catch (error) {
-        console.log('An error occured', error);
-        return res.send(400);
+        return res.send(500);
     }
 });
 
@@ -61,10 +61,27 @@ router.post(
 
             return res.send(createApiResponse<UpsertProfileResponse>(response.data));
         } catch (error) {
-            console.log('An error occured', error);
-            return res.send(400);
+            return res.send(500);
         }
     }
 );
+
+/**
+ * GET /api/profile
+ * Gets all profiles
+ * @returns {ApiResponse<GetAllProfilesResponse>}
+ */
+router.get('/', JwtMiddleware, async (req: Request, res: Response) => {
+    try {
+        const response = await getUserProfiles();
+        if (!response.data) {
+            return res.status(400).json(createApiResponse(null, [{ msg: response.msg as string }]));
+        }
+
+        return res.send(createApiResponse<GetAllProfilesResponse>(response.data));
+    } catch (error) {
+        return res.send(500);
+    }
+});
 
 export default router;

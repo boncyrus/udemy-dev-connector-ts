@@ -1,6 +1,6 @@
+import { UpsertProfileRequest } from '../../models/UpsertProfileRequest';
 import ProfileSchema from '../schemas/ProfileSchema';
 import UserSchema from '../schemas/UserSchema';
-import { UpsertProfileRequest } from '../../models/UpsertProfileRequest';
 import { getUser } from './UsersRepository';
 
 export const getProfile = async (email: string) => {
@@ -45,4 +45,9 @@ export const updateProfile = async (email: string, profile: UpsertProfileRequest
 
         return entity?.save();
     }
+};
+
+export const getAllProfiles = async () => {
+    const profiles = ProfileSchema.find().populate('user', ['name', 'avatar']);
+    return profiles;
 };

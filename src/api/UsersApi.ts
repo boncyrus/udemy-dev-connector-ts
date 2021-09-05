@@ -46,8 +46,7 @@ router.post(
 
             return res.send(createApiResponse<CreateUserResponse>(result.data));
         } catch (error) {
-            console.log('An error occured', error);
-            return res.send(400);
+            return res.send(500);
         }
     }
 );

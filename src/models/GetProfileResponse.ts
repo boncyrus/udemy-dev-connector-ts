@@ -1,5 +1,3 @@
-import { User } from './User';
-
 export interface GetProfileResponse {
     userId: any;
     company?: string;

@@ -19,12 +19,11 @@ export const createProfile = async (email: string, profile: UpsertProfileRequest
     const user = await getUser(email);
     const entity = new ProfileSchema({
         ...profile,
-        user: {
-            ...user,
-        },
+        user: user,
     });
 
-    return entity.save();
+    const savedEntity = await entity.save();
+    return savedEntity.populate('user').execPopulate();
 };
 
 export const updateProfile = async (email: string, profile: UpsertProfileRequest) => {
@@ -43,7 +42,7 @@ export const updateProfile = async (email: string, profile: UpsertProfileRequest
             }
         );
 
-        return entity?.save();
+        return entity?.populate('user').execPopulate();
     }
 };
 

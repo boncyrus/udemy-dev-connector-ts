@@ -84,4 +84,27 @@ router.get('/', JwtMiddleware, async (req: Request, res: Response) => {
     }
 });
 
+/**
+ * GET /api/profile/:email
+ * Gets the profile by email
+ * @returns {ApiResponse<GetProfileResponse>}
+ */
+router.get('/:email', async (req: Request, res: Response) => {
+    try {
+        const request: GetProfileRequest = {
+            email: req.params.email,
+        };
+
+        const result = await getUserProfile(request);
+
+        if (!result.data) {
+            return res.status(400).json(createApiResponse(null, [{ msg: result.msg as string }]));
+        }
+
+        return res.send(createApiResponse<GetProfileResponse>(result.data));
+    } catch (error) {
+        return res.send(500);
+    }
+});
+
 export default router;

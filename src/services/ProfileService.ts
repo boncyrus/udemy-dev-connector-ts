@@ -23,7 +23,11 @@ export const getUserProfile = async (request: GetProfileRequest) => {
         githubUsername: profile.githubUsername,
         website: profile.website,
         profession: profile.profession,
-        userId: user.id,
+        user: {
+            id: user.id,
+            name: user.name,
+            avatar: user.avatar,
+        },
     };
 
     return createSuccessResponse(response);
@@ -35,28 +39,31 @@ export const upsertUserProfile = async (email: string, request: UpsertProfileReq
 
     if (currentProfile) {
         result = await updateProfile(email, {
-            profession: request.profession ? request.profession : currentProfile.profession,
+            profession: request.profession,
             skills: Array.from(new Set([...currentProfile.skills, ...request.skills])),
-            company: request.company ? request.company : currentProfile?.company,
-            bio: request.bio ? request.bio : currentProfile?.bio,
-            githubUsername: request.githubUsername ? request.githubUsername : currentProfile?.githubUsername,
-            website: request.website ? request.website : currentProfile?.website,
+            company: request?.company || undefined,
+            bio: request?.bio || undefined,
+            githubUsername: request?.githubUsername || undefined,
+            website: request?.website || undefined,
         });
     } else {
         result = await createProfile(email, request);
     }
 
     if (result) {
-        const userId = result.user as any;
-
+        const user = result?.user as any;
         const response: UpsertProfileResponse = {
             skills: result.skills,
-            bio: result?.bio,
-            company: result?.company,
-            website: result?.website,
-            githubUsername: result?.githubUsername,
+            bio: result?.bio || undefined,
+            company: result?.company || undefined,
+            website: result?.website || undefined,
+            githubUsername: result?.githubUsername || undefined,
             profession: result.profession,
-            userId: userId,
+            user: {
+                id: user.id,
+                name: user.name,
+                avatar: user.avatar as string,
+            },
         };
 
         return createSuccessResponse(response);
@@ -73,14 +80,19 @@ export const getUserProfiles = async () => {
 
     if (profiles) {
         const items: typeof result.profiles = profiles.map((item) => {
+            const user = item.user as any;
             return {
                 profession: item.profession,
                 skills: item.skills,
-                userId: item.id,
-                bio: item?.bio,
-                company: item?.company,
-                githubUsername: item?.githubUsername,
-                website: item?.website,
+                bio: item?.bio || undefined,
+                company: item?.company || undefined,
+                githubUsername: item?.githubUsername || undefined,
+                website: item?.website || undefined,
+                user: {
+                    id: user.id,
+                    name: user.name,
+                    avatar: user.avatar as string,
+                },
             };
         });
 

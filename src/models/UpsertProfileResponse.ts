@@ -1,5 +1,7 @@
+import { UserSlim } from './UserSlim';
+
 export interface UpsertProfileResponse {
-    userId: any;
+    user: UserSlim;
     company?: string;
     website?: string;
     skills: Array<string>;

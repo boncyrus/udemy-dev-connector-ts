@@ -1,9 +1,10 @@
+import { UserSlim } from './UserSlim';
 export interface GetProfileResponse {
-    userId: any;
     company?: string;
     website?: string;
     skills: Array<string>;
     bio?: string;
     githubUsername?: string;
     profession: string;
+    user: UserSlim;
 }
